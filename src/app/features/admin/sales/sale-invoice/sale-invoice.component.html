@@ -1,0 +1,83 @@
+<section class="invoice-page" *ngIf="sale as invoice">
+  <div class="invoice-page__actions no-print">
+    <button mat-stroked-button routerLink="/admin/sales" type="button">
+      <mat-icon>arrow_back</mat-icon>
+      Volver
+    </button>
+    <button mat-flat-button color="primary" type="button" (click)="print()">
+      <mat-icon>print</mat-icon>
+      Imprimir
+    </button>
+  </div>
+
+  <mat-card class="ticket">
+    <div class="ticket__center">
+      <h1>INVENTORY FLOW</h1>
+      <p>Ticket de venta</p>
+      <p>Factura #{{ invoice.id }}</p>
+      <p>{{ invoice.date | date:'short' }}</p>
+    </div>
+
+    <div class="ticket__divider"></div>
+
+    <div class="ticket__meta">
+      <div class="ticket__row">
+        <span>Cliente</span>
+        <strong>{{ invoice.customerName }}</strong>
+      </div>
+      <div class="ticket__row">
+        <span>ID</span>
+        <strong>{{ invoice.documentNumber }}</strong>
+      </div>
+      <div class="ticket__row">
+        <span>Pago</span>
+        <strong>{{ invoice.paymentMethod }}</strong>
+      </div>
+    </div>
+
+    <div class="ticket__divider"></div>
+
+    <div class="ticket__items">
+      <div class="ticket__items-head">
+        <span>Producto</span>
+        <span>Total</span>
+      </div>
+
+      <div class="ticket__item" *ngFor="let item of invoice.items">
+        <div class="ticket__item-main">
+          <strong>{{ item.productName }}</strong>
+          <span>{{ item.quantity }} x {{ item.price | currency:'COP':'symbol':'1.0-0' }}</span>
+        </div>
+        <strong>{{ item.total | currency:'COP':'symbol':'1.0-0' }}</strong>
+        <div class="ticket__item-sub">
+          <span>Subtotal {{ item.subtotal | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span>IVA {{ item.ivaAmount | currency:'COP':'symbol':'1.0-0' }}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ticket__divider"></div>
+
+    <div class="ticket__totals">
+      <div class="ticket__row">
+        <span>Subtotal</span>
+        <strong>{{ invoice.subtotal | currency:'COP':'symbol':'1.0-0' }}</strong>
+      </div>
+      <div class="ticket__row">
+        <span>IVA</span>
+        <strong>{{ invoice.iva | currency:'COP':'symbol':'1.0-0' }}</strong>
+      </div>
+      <div class="ticket__row ticket__row--total">
+        <span>Total</span>
+        <strong>{{ invoice.total | currency:'COP':'symbol':'1.0-0' }}</strong>
+      </div>
+    </div>
+
+    <div class="ticket__divider"></div>
+
+    <div class="ticket__center ticket__footer">
+      <p>Gracias por su compra</p>
+      <p>Conserve este comprobante</p>
+    </div>
+  </mat-card>
+</section>

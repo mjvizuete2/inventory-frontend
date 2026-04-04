@@ -1,4 +1,59 @@
-/* You can add global styles to this file, and also import other style files */
+html,
+body {
+  height: 100%;
+}
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+  background: #f3f6fb;
+  color: #0f172a;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media print {
+  html.printing-invoice,
+  body.printing-invoice {
+    background: #ffffff !important;
+  }
+
+  html.printing-invoice body * {
+    visibility: hidden !important;
+  }
+
+  html.printing-invoice body .invoice-page,
+  html.printing-invoice body .invoice-page * {
+    visibility: visible !important;
+  }
+
+  html.printing-invoice body .shell__sidenav,
+  html.printing-invoice body .shell__toolbar,
+  html.printing-invoice body .no-print {
+    display: none !important;
+  }
+
+  html.printing-invoice body .shell,
+  html.printing-invoice body .shell__content,
+  html.printing-invoice body .shell__main {
+    background: #ffffff !important;
+    min-height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: visible !important;
+  }
+
+  html.printing-invoice body .invoice-page {
+    position: absolute !important;
+    inset: 0 !important;
+    display: grid !important;
+    place-items: start center;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+    background: #ffffff !important;
+  }
+}

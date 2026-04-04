@@ -1,0 +1,59 @@
+.closures-page__card {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.closures-page__header {
+  padding: 1.5rem 1.5rem 0;
+}
+
+.closures-page__eyebrow {
+  margin: 0 0 0.35rem;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.closures-page__header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.closures-page__header p:last-child {
+  margin: 0.4rem 0 0;
+  color: #64748b;
+}
+
+.closures-page__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.5rem 0;
+}
+
+.closures-page__summary {
+  padding: 0 1.5rem 1rem;
+  font-weight: 700;
+}
+
+.closures-page__table {
+  overflow: auto;
+}
+
+.closures-page__users,
+.closures-page__breakdown {
+  display: grid;
+  gap: 0.2rem;
+}
+
+table {
+  width: 100%;
+}
+
+@media (max-width: 720px) {
+  .closures-page__filters {
+    flex-direction: column;
+  }
+}

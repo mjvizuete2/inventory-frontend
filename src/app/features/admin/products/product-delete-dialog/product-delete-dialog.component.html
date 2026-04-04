@@ -1,0 +1,17 @@
+<div class="delete-dialog__icon">
+  <mat-icon>warning</mat-icon>
+</div>
+
+<h2 mat-dialog-title>Eliminar producto</h2>
+
+<mat-dialog-content>
+  <p>
+    Se eliminará <strong>{{ product.name }}</strong> con SKU <strong>{{ product.sku }}</strong>.
+  </p>
+  <p>Esta acción solo afecta el mock local del módulo.</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button mat-flat-button color="warn" type="button" (click)="confirm()">Eliminar</button>
+</mat-dialog-actions>

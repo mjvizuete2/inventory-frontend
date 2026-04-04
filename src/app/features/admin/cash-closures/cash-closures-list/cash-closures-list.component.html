@@ -1,0 +1,83 @@
+<section class="closures-page">
+  <mat-card class="closures-page__card">
+    <div class="closures-page__header">
+      <div>
+        <p class="closures-page__eyebrow">Cierres de caja</p>
+        <h1>Resumen diario</h1>
+        <p>Consulta cierres diarios con valores agregados y desglose por metodo de pago.</p>
+      </div>
+    </div>
+
+    <div class="closures-page__filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" [value]="dateFrom" (input)="onDateFromChange($any($event.target).value)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" [value]="dateTo" (input)="onDateToChange($any($event.target).value)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Usuario</mat-label>
+        <input matInput [value]="userFilter" placeholder="Filtrar por usuario" (input)="onUserFilterChange($any($event.target).value)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Metodo</mat-label>
+        <mat-select [value]="methodFilter" (valueChange)="onMethodFilterChange($event)">
+          <mat-option *ngFor="let method of methodOptions" [value]="method.value">
+            {{ method.label }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="closures-page__summary">
+      Total filtrado: {{ filteredTotal | currency:'COP':'symbol':'1.0-0' }}
+    </div>
+
+    <div class="closures-page__table">
+      <table mat-table [dataSource]="filteredClosures">
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef>Fecha</th>
+          <td mat-cell *matCellDef="let closure">{{ closure.date | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="transactions">
+          <th mat-header-cell *matHeaderCellDef>Transacciones</th>
+          <td mat-cell *matCellDef="let closure">{{ closure.sales.length }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="users">
+          <th mat-header-cell *matHeaderCellDef>Usuarios</th>
+          <td mat-cell *matCellDef="let closure">
+            <div class="closures-page__users">
+              <span *ngFor="let user of closure.users">{{ user }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="breakdown">
+          <th mat-header-cell *matHeaderCellDef>Desglose</th>
+          <td mat-cell *matCellDef="let closure">
+            <div class="closures-page__breakdown">
+              <span>Efectivo: {{ closure.cashTotal | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span>Tarjeta: {{ closure.cardTotal | currency:'COP':'symbol':'1.0-0' }}</span>
+              <span>Transferencia: {{ closure.transferTotal | currency:'COP':'symbol':'1.0-0' }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>Total ventas</th>
+          <td mat-cell *matCellDef="let closure">{{ closure.total | currency:'COP':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+  </mat-card>
+</section>

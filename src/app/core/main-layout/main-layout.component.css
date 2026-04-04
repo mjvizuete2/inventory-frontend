@@ -1,0 +1,82 @@
+.shell {
+  min-height: 100vh;
+  background: #f3f6fb;
+}
+
+.shell__sidenav {
+  width: 280px;
+  padding: 1.5rem 1rem;
+  border-right: 1px solid #d7dee8;
+  background: linear-gradient(180deg, #0f172a 0%, #182b4a 100%);
+  color: #f8fafc;
+}
+
+.shell__brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 0.75rem 1.5rem;
+}
+
+.shell__brand h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.shell__brand p {
+  margin: 0.2rem 0 0;
+  color: rgba(248, 250, 252, 0.72);
+  font-size: 0.85rem;
+}
+
+.shell__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.9rem;
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+}
+
+.shell__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.shell__toolbar {
+  gap: 0.75rem;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.shell__spacer {
+  flex: 1;
+}
+
+.shell__main {
+  flex: 1;
+  padding: 2rem;
+}
+
+:host ::ng-deep .mat-mdc-list-item.active-link {
+  border-radius: 0.9rem;
+  background: rgba(59, 130, 246, 0.18);
+}
+
+:host ::ng-deep .mat-mdc-list-item .mdc-list-item__primary-text,
+:host ::ng-deep .mat-mdc-list-item mat-icon {
+  color: #f8fafc;
+}
+
+@media (max-width: 900px) {
+  .shell__sidenav {
+    width: 240px;
+  }
+
+  .shell__main {
+    padding: 1rem;
+  }
+}

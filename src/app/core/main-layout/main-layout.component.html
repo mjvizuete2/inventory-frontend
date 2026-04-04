@@ -1,1 +1,47 @@
-<p>main-layout works!</p>
+<mat-sidenav-container class="shell">
+  <mat-sidenav class="shell__sidenav" mode="side" opened>
+    <div class="shell__brand">
+      <div class="shell__brand-mark">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <div>
+        <h2>Inventory Flow</h2>
+        <p>Panel administrativo</p>
+      </div>
+    </div>
+
+    <mat-nav-list>
+      <a mat-list-item routerLink="/admin/products" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>storefront</mat-icon>
+        <span matListItemTitle>Productos</span>
+      </a>
+      <a mat-list-item routerLink="/admin/customers" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>groups</mat-icon>
+        <span matListItemTitle>Clientes</span>
+      </a>
+      <a mat-list-item routerLink="/admin/sales" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>receipt_long</mat-icon>
+        <span matListItemTitle>Ventas</span>
+      </a>
+      <a mat-list-item routerLink="/admin/cash-closures" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>today</mat-icon>
+        <span matListItemTitle>Cierres</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell__content">
+    <mat-toolbar color="primary" class="shell__toolbar">
+      <span>Gestión de productos</span>
+      <span class="shell__spacer"></span>
+      <button mat-flat-button routerLink="/admin/products">
+        <mat-icon>inventory</mat-icon>
+        Catálogo
+      </button>
+    </mat-toolbar>
+
+    <main class="shell__main">
+      <router-outlet></router-outlet>
+    </main>
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,1 +1,115 @@
-<p>products-list works!</p>
+<section class="products-page">
+  <mat-card class="products-page__card">
+    <div class="products-page__header">
+      <div>
+        <p class="products-page__eyebrow">Módulo de productos</p>
+        <h1>Catálogo</h1>
+        <p>Administra el listado, stock, precios y estado comercial de cada referencia.</p>
+      </div>
+
+      <button mat-flat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Nuevo producto
+      </button>
+    </div>
+
+    <div class="products-page__summary">
+      <mat-chip>Total: {{ dataSource.data.length }}</mat-chip>
+      <mat-chip>Activos: {{ activeProductsCount }}</mat-chip>
+      <mat-chip>Con IVA: {{ taxableProductsCount }}</mat-chip>
+    </div>
+
+    <div class="products-page__toolbar">
+      <mat-form-field appearance="outline" class="products-page__filter">
+        <mat-label>Filtrar productos</mat-label>
+        <input
+          matInput
+          placeholder="Nombre, SKU, categoría o proveedor"
+          (input)="applyFilter($event)"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="products-page__loading" *ngIf="loading">
+      <mat-spinner diameter="52"></mat-spinner>
+    </div>
+
+    <div class="products-page__table" [class.products-page__table--hidden]="loading">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="sku">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>SKU</th>
+          <td mat-cell *matCellDef="let product">{{ product.sku }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Producto</th>
+          <td mat-cell *matCellDef="let product">
+            <div class="product-cell">
+              <strong>{{ product.name }}</strong>
+              <span>{{ product.supplier }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="category">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+          <td mat-cell *matCellDef="let product">{{ product.category }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="price">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
+          <td mat-cell *matCellDef="let product">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="stock">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Stock</th>
+          <td mat-cell *matCellDef="let product">{{ product.stock }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+          <td mat-cell *matCellDef="let product">
+            <mat-chip [class.chip--inactive]="product.status === 'inactive'">
+              {{ product.status === 'active' ? 'Activo' : 'Inactivo' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="iva">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
+          <td mat-cell *matCellDef="let product">
+            <mat-chip>{{ product.iva ? 'Aplica' : 'Exento' }}</mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Actualizado</th>
+          <td mat-cell *matCellDef="let product">{{ product.updatedAt | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let product" class="actions-cell">
+            <button mat-icon-button color="primary" (click)="openEditDialog(product)" aria-label="Editar producto">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="openDeleteDialog(product)" aria-label="Eliminar producto">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell products-page__empty" [attr.colspan]="displayedColumns.length">
+            No se encontraron productos para el filtro actual.
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card>
+</section>

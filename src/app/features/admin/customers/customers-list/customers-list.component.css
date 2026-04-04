@@ -1,0 +1,86 @@
+.customers-page__card {
+  border-radius: 1.5rem;
+  overflow: hidden;
+}
+
+.customers-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.5rem 1.5rem 0;
+}
+
+.customers-page__eyebrow {
+  margin: 0 0 0.35rem;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.customers-page__header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.customers-page__header p:last-child {
+  margin: 0.4rem 0 0;
+  color: #64748b;
+}
+
+.customers-page__summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem 0;
+}
+
+.customers-page__toolbar {
+  padding: 1rem 1.5rem;
+}
+
+.customers-page__filter {
+  width: min(100%, 420px);
+}
+
+.customers-page__table {
+  overflow: auto;
+}
+
+.customer-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.customer-cell span {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.actions-cell {
+  width: 120px;
+}
+
+.chip--inactive {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.customers-page__empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: #64748b;
+}
+
+table {
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .customers-page__header {
+    flex-direction: column;
+  }
+}

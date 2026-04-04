@@ -1,1 +1,112 @@
-<p>sales-list works!</p>
+<section class="sales-page">
+  <mat-card class="sales-page__card">
+    <div class="sales-page__header">
+      <div>
+        <p class="sales-page__eyebrow">Ventas</p>
+        <h1>Facturacion</h1>
+        <p>Consulta las facturas creadas y abre la version imprimible de cada venta.</p>
+      </div>
+
+      <button mat-flat-button color="primary" routerLink="/admin/sales/create">
+        <mat-icon>add</mat-icon>
+        Nueva venta
+      </button>
+    </div>
+
+    <div class="sales-page__summary">
+      <mat-chip>Total ventas: {{ dataSource.data.length }}</mat-chip>
+      <mat-chip>Facturado hoy: {{ todayTotal | currency:'COP':'symbol':'1.0-0' }}</mat-chip>
+    </div>
+
+    <div class="sales-page__toolbar">
+      <mat-form-field appearance="outline" class="sales-page__filter">
+        <mat-label>Filtrar ventas</mat-label>
+        <input matInput placeholder="Cliente, documento o medio de pago" (input)="applyFilter($event)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="sales-page__date">
+        <mat-label>Desde</mat-label>
+        <input matInput type="date" [value]="dateFrom" (input)="onDateFromChange($any($event.target).value)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="sales-page__date">
+        <mat-label>Hasta</mat-label>
+        <input matInput type="date" [value]="dateTo" (input)="onDateToChange($any($event.target).value)" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="sales-page__user">
+        <mat-label>Usuario</mat-label>
+        <input matInput [value]="userFilter" placeholder="Filtrar por usuario" (input)="onUserFilterChange($any($event.target).value)" />
+      </mat-form-field>
+    </div>
+
+    <div class="sales-page__table">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Factura</th>
+          <td mat-cell *matCellDef="let sale">#{{ sale.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Fecha</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.date | date:'medium' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
+          <td mat-cell *matCellDef="let sale">
+            <div class="sales-page__customer">
+              <strong>{{ sale.customerName }}</strong>
+              <span>{{ sale.documentNumber }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="items">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Items</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.items.length }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdBy">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Usuario</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.createdBy }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="paymentMethod">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Pago</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.paymentMethod }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="iva">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.iva | currency:'COP':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.total | currency:'COP':'symbol':'1.0-0' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let sale" class="actions-cell">
+            <a mat-icon-button color="primary" [routerLink]="['/admin/sales', sale.id, 'invoice']" aria-label="Ver factura">
+              <mat-icon>description</mat-icon>
+            </a>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell sales-page__empty" [attr.colspan]="displayedColumns.length">
+            No hay ventas que coincidan con el filtro.
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card>
+</section>

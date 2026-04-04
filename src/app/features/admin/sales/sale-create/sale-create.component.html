@@ -1,1 +1,132 @@
-<p>sale-create works!</p>
+<section class="sale-create">
+  <div class="sale-create__layout">
+    <mat-card class="sale-create__card">
+      <div class="sale-create__header">
+        <div>
+          <p class="sale-create__eyebrow">Nueva venta</p>
+          <h1>Crear factura</h1>
+          <p>Busca clientes por nombre, email o identificacion y agrega multiples productos por nombre o SKU.</p>
+        </div>
+
+        <button mat-stroked-button routerLink="/admin/sales" type="button">
+          <mat-icon>arrow_back</mat-icon>
+          Volver
+        </button>
+      </div>
+
+      <form [formGroup]="form" class="sale-form" (ngSubmit)="submit()">
+        <div class="sale-form__grid">
+          <mat-form-field appearance="outline" class="sale-form__full">
+            <mat-label>Buscar cliente</mat-label>
+            <input
+              matInput
+              formControlName="customerQuery"
+              [matAutocomplete]="customerAuto"
+              placeholder="Nombre, correo o identificacion"
+            />
+            <mat-icon matSuffix>search</mat-icon>
+            <mat-autocomplete #customerAuto="matAutocomplete" (optionSelected)="onCustomerSelected($event)">
+              <mat-option *ngFor="let customer of customerOptions$ | async" [value]="customer.id">
+                <div class="autocomplete-option">
+                  <strong>{{ customer.name }}</strong>
+                  <span>{{ customer.documentNumber }} · {{ customer.email }}</span>
+                </div>
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Medio de pago</mat-label>
+            <mat-select formControlName="paymentMethod">
+              <mat-option *ngFor="let method of paymentMethods" [value]="method.value">
+                {{ method.label }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="sale-form__customer-card" *ngIf="selectedCustomer as customer">
+            <strong>{{ customer.name }}</strong>
+            <span>{{ customer.email }}</span>
+            <span>{{ customer.phone }} · {{ customer.city }}</span>
+          </div>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <div formArrayName="items" class="sale-form__items">
+          <div
+            *ngFor="let item of items.controls; let i = index; trackBy: trackByIndex"
+            [formGroupName]="i"
+            class="sale-form__item"
+          >
+            <div class="sale-form__item-grid">
+              <mat-form-field appearance="outline">
+                <mat-label>Buscar producto</mat-label>
+                <input
+                  matInput
+                  formControlName="productQuery"
+                  [matAutocomplete]="productAuto"
+                  placeholder="Nombre o SKU"
+                />
+                <mat-icon matSuffix>search</mat-icon>
+                <mat-autocomplete #productAuto="matAutocomplete" (optionSelected)="onProductSelected(i, $event)">
+                  <mat-option *ngFor="let product of getProductOptions(i) | async" [value]="product.id">
+                    <div class="autocomplete-option">
+                      <strong>{{ product.name }}</strong>
+                      <span>{{ product.sku }} · {{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
+                    </div>
+                  </mat-option>
+                </mat-autocomplete>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>Cantidad</mat-label>
+                <input matInput type="number" formControlName="quantity" />
+              </mat-form-field>
+
+              <div class="sale-form__meta" *ngIf="getSelectedProduct(i) as product">
+                <span>SKU: {{ product.sku }}</span>
+                <span>Precio: {{ product.price | currency:'COP':'symbol':'1.0-0' }}</span>
+                <span>Subtotal: {{ getItemSubtotal(i) | currency:'COP':'symbol':'1.0-0' }}</span>
+                <span>IVA: {{ getItemIva(i) | currency:'COP':'symbol':'1.0-0' }}</span>
+              </div>
+
+              <button mat-icon-button color="warn" type="button" (click)="removeItem(i)" [disabled]="items.length === 1">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <button mat-stroked-button type="button" (click)="addItem()">
+          <mat-icon>add</mat-icon>
+          Agregar producto
+        </button>
+
+        <button mat-flat-button color="primary" class="sale-form__submit sale-form__submit--mobile" type="submit">
+          Guardar factura
+        </button>
+      </form>
+    </mat-card>
+
+    <mat-card class="sale-summary">
+      <h2>Resumen</h2>
+      <div class="sale-summary__row">
+        <span>Subtotal</span>
+        <strong>{{ subtotal | currency:'COP':'symbol':'1.0-0' }}</strong>
+      </div>
+      <div class="sale-summary__row">
+        <span>IVA</span>
+        <strong>{{ iva | currency:'COP':'symbol':'1.0-0' }}</strong>
+      </div>
+      <div class="sale-summary__row sale-summary__row--total">
+        <span>Total</span>
+        <strong>{{ total | currency:'COP':'symbol':'1.0-0' }}</strong>
+      </div>
+
+      <button mat-flat-button color="primary" class="sale-form__submit" type="button" (click)="submit()">
+        Guardar factura
+      </button>
+    </mat-card>
+  </div>
+</section>

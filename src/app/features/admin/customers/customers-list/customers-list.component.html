@@ -1,0 +1,99 @@
+<section class="customers-page">
+  <mat-card class="customers-page__card">
+    <div class="customers-page__header">
+      <div>
+        <p class="customers-page__eyebrow">Clientes</p>
+        <h1>Base de clientes</h1>
+        <p>Administra los clientes disponibles para el flujo de facturacion.</p>
+      </div>
+
+      <button mat-flat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>person_add</mat-icon>
+        Nuevo cliente
+      </button>
+    </div>
+
+    <div class="customers-page__summary">
+      <mat-chip>Total: {{ dataSource.data.length }}</mat-chip>
+      <mat-chip>Activos: {{ activeCustomersCount }}</mat-chip>
+    </div>
+
+    <div class="customers-page__toolbar">
+      <mat-form-field appearance="outline" class="customers-page__filter">
+        <mat-label>Filtrar clientes</mat-label>
+        <input matInput placeholder="Nombre, documento, correo o ciudad" (input)="applyFilter($event)" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="customers-page__table">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Cliente</th>
+          <td mat-cell *matCellDef="let customer">
+            <div class="customer-cell">
+              <strong>{{ customer.name }}</strong>
+              <span>{{ customer.address }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="documentNumber">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Documento</th>
+          <td mat-cell *matCellDef="let customer">{{ customer.documentNumber }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Correo</th>
+          <td mat-cell *matCellDef="let customer">{{ customer.email }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="phone">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Telefono</th>
+          <td mat-cell *matCellDef="let customer">{{ customer.phone }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="city">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Ciudad</th>
+          <td mat-cell *matCellDef="let customer">{{ customer.city }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+          <td mat-cell *matCellDef="let customer">
+            <mat-chip [class.chip--inactive]="customer.status === 'inactive'">
+              {{ customer.status === 'active' ? 'Activo' : 'Inactivo' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="updatedAt">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Actualizado</th>
+          <td mat-cell *matCellDef="let customer">{{ customer.updatedAt | date:'mediumDate' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let customer" class="actions-cell">
+            <button mat-icon-button color="primary" (click)="openEditDialog(customer)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="openDeleteDialog(customer)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell customers-page__empty" [attr.colspan]="displayedColumns.length">
+            No hay clientes para el filtro actual.
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </mat-card>
+</section>

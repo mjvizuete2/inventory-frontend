@@ -1,0 +1,150 @@
+.invoice-page {
+  display: grid;
+  justify-content: center;
+  gap: 1.25rem;
+  padding: 1rem;
+}
+
+.invoice-page__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  width: min(100%, 360px);
+}
+
+.ticket {
+  width: min(100%, 320px);
+  padding: 1rem 0.9rem;
+  border-radius: 1rem;
+  font-family: "Courier New", monospace;
+  color: #111827;
+}
+
+.ticket__center {
+  text-align: center;
+}
+
+.ticket__center h1 {
+  margin: 0;
+  font-size: 1.05rem;
+  letter-spacing: 0.08em;
+}
+
+.ticket__center p {
+  margin: 0.18rem 0;
+  font-size: 0.78rem;
+}
+
+.ticket__divider {
+  margin: 0.75rem 0;
+  border-top: 1px dashed #94a3b8;
+}
+
+.ticket__meta,
+.ticket__totals,
+.ticket__items {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.ticket__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.78rem;
+}
+
+.ticket__row span:first-child {
+  color: #475569;
+}
+
+.ticket__row strong {
+  text-align: right;
+  font-weight: 700;
+}
+
+.ticket__items-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ticket__item {
+  display: grid;
+  gap: 0.28rem;
+  padding: 0.45rem 0;
+  border-bottom: 1px dashed #cbd5e1;
+}
+
+.ticket__item:last-child {
+  border-bottom: 0;
+}
+
+.ticket__item-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+  font-size: 0.76rem;
+}
+
+.ticket__item-main strong {
+  flex: 1;
+}
+
+.ticket__item-main span {
+  white-space: nowrap;
+  color: #475569;
+}
+
+.ticket__item-sub {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.7rem;
+  color: #64748b;
+}
+
+.ticket__row--total {
+  font-size: 0.95rem;
+}
+
+.ticket__footer {
+  font-size: 0.72rem;
+}
+
+@media print {
+  @page {
+    size: 80mm auto;
+    margin: 4mm;
+  }
+
+  .no-print,
+  .shell__toolbar,
+  .shell__sidenav {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #ffffff !important;
+  }
+
+  .invoice-page {
+    padding: 0;
+    justify-content: center;
+  }
+
+  .ticket {
+    width: 72mm;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0;
+    margin: 0 auto;
+    border-radius: 0;
+  }
+}

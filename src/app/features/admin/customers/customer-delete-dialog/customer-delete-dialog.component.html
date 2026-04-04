@@ -1,0 +1,15 @@
+<div class="delete-dialog__icon">
+  <mat-icon>person_remove</mat-icon>
+</div>
+
+<h2 mat-dialog-title>Eliminar cliente</h2>
+
+<mat-dialog-content>
+  <p>Se eliminara <strong>{{ customer.name }}</strong>.</p>
+  <p>Esta accion solo afecta los datos mock del panel.</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button mat-flat-button color="warn" type="button" (click)="confirm()">Eliminar</button>
+</mat-dialog-actions>

@@ -1,0 +1,157 @@
+.sale-create__layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, 0.8fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.sale-create__card,
+.sale-summary {
+  border-radius: 1.5rem;
+}
+
+.sale-create__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.sale-create__eyebrow {
+  margin: 0 0 0.35rem;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sale-create__header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.sale-create__header p:last-child {
+  margin: 0.4rem 0 0;
+  color: #64748b;
+}
+
+.sale-form {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.sale-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.sale-form__full {
+  grid-column: 1 / -1;
+}
+
+.sale-form__customer-card {
+  display: grid;
+  gap: 0.25rem;
+  padding: 1rem 1.1rem;
+  border: 1px solid #dbe3ef;
+  border-radius: 1rem;
+  background: #f8fafc;
+  color: #475569;
+}
+
+.sale-form__items {
+  display: grid;
+  gap: 1rem;
+}
+
+.sale-form__item {
+  padding: 1rem;
+  border: 1px solid #dbe3ef;
+  border-radius: 1rem;
+  background: #f8fafc;
+}
+
+.sale-form__item-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) 140px minmax(210px, 0.9fr) 48px;
+  gap: 1rem;
+  align-items: center;
+}
+
+.sale-form__meta {
+  display: grid;
+  gap: 0.3rem;
+  color: #475569;
+  font-size: 0.9rem;
+}
+
+.autocomplete-option {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.autocomplete-option span {
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.sale-summary {
+  position: sticky;
+  top: 5.5rem;
+  padding: 1.5rem;
+}
+
+.sale-summary h2 {
+  margin: 0 0 1.25rem;
+}
+
+.sale-summary__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.sale-summary__row--total {
+  font-size: 1.15rem;
+  border-bottom: 0;
+}
+
+.sale-form__submit {
+  width: 100%;
+  min-height: 3rem;
+  border-radius: 0.9rem;
+}
+
+.sale-form__submit--mobile {
+  display: none;
+}
+
+@media (max-width: 1100px) {
+  .sale-create__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .sale-summary {
+    position: static;
+  }
+}
+
+@media (max-width: 820px) {
+  .sale-form__grid,
+  .sale-form__item-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sale-create__header {
+    flex-direction: column;
+  }
+
+  .sale-form__submit--mobile {
+    display: inline-flex;
+  }
+}
