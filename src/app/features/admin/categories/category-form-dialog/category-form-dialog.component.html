@@ -1,0 +1,28 @@
+﻿<h2 mat-dialog-title>
+  {{ data.mode === 'create' ? 'Nueva categoria' : 'Editar categoria' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="form" class="category-form">
+    <div class="category-form__grid">
+      <mat-form-field appearance="outline" class="category-form__full">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="category-form__full">
+        <mat-label>Descripcion</mat-label>
+        <textarea matInput rows="4" formControlName="description"></textarea>
+      </mat-form-field>
+    </div>
+
+    <mat-slide-toggle formControlName="active">Categoria activa</mat-slide-toggle>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button mat-flat-button color="primary" type="button" (click)="save()">
+    {{ data.mode === 'create' ? 'Crear' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>

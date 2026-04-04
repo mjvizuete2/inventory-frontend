@@ -1,41 +1,88 @@
-<section class="categories-page">
-  <mat-card>
-    <h1>Categorías</h1>
-    <form [formGroup]="form">
-      <mat-form-field appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="name" />
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Descripción</mat-label>
-        <input matInput formControlName="description" />
-      </mat-form-field>
-      <button mat-flat-button color="primary" type="button" (click)="save()">Guardar</button>
-      <button mat-button type="button" (click)="reset()">Limpiar</button>
-    </form>
+﻿<section class="categories-page">
+  <mat-card class="categories-page__card">
+    <div class="categories-page__header">
+      <div>
+        <p class="categories-page__eyebrow">Modulo de categorias</p>
+        <h1>Categorias</h1>
+        <p>Organiza el catalogo con una estructura visual alineada al modulo de productos.</p>
+      </div>
 
-    <table mat-table [dataSource]="categories">
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef>Nombre</th>
-        <td mat-cell *matCellDef="let category">{{ category.name }}</td>
-      </ng-container>
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Descripción</th>
-        <td mat-cell *matCellDef="let category">{{ category.description }}</td>
-      </ng-container>
-      <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>Acciones</th>
-        <td mat-cell *matCellDef="let category">
-          <button mat-icon-button color="primary" type="button" (click)="edit(category)">
-            <mat-icon>edit</mat-icon>
-          </button>
-          <button mat-icon-button color="warn" type="button" (click)="remove(category)">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
+      <button mat-flat-button color="primary" (click)="openCreateDialog()">
+        <mat-icon>add</mat-icon>
+        Agregar categoria
+      </button>
+    </div>
+
+    <div class="categories-page__summary">
+      <mat-chip>Total: {{ dataSource.data.length }}</mat-chip>
+      <mat-chip>Activas: {{ activeCategoriesCount }}</mat-chip>
+      <mat-chip>Con descripcion: {{ categoriesWithDescriptionCount }}</mat-chip>
+    </div>
+
+    <div class="categories-page__toolbar">
+      <mat-form-field appearance="outline" class="categories-page__filter">
+        <mat-label>Filtrar categorias</mat-label>
+        <input
+          matInput
+          placeholder="Nombre o descripcion"
+          (input)="applyFilter($event)"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <div class="categories-page__loading" *ngIf="loading">
+      <mat-spinner diameter="52"></mat-spinner>
+    </div>
+
+    <div class="categories-page__table" [class.categories-page__table--hidden]="loading">
+      <table mat-table [dataSource]="dataSource" matSort>
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoria</th>
+          <td mat-cell *matCellDef="let category">
+            <div class="category-cell">
+              <strong>{{ category.name }}</strong>
+              <span>{{ category.description || 'Sin descripcion registrada' }}</span>
+            </div>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Descripcion</th>
+          <td mat-cell *matCellDef="let category">{{ category.description || 'Sin descripcion' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Estado</th>
+          <td mat-cell *matCellDef="let category">
+            <mat-chip [class.chip--inactive]="category.active === false">
+              {{ category.active === false ? 'Inactiva' : 'Activa' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let category" class="actions-cell">
+            <button mat-icon-button color="primary" (click)="openEditDialog(category)" aria-label="Editar categoria">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="openDeleteDialog(category)" aria-label="Eliminar categoria">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell categories-page__empty" [attr.colspan]="displayedColumns.length">
+            No se encontraron categorias para el filtro actual.
+          </td>
+        </tr>
+      </table>
+
+      <mat-paginator [pageSize]="5" [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
   </mat-card>
 </section>

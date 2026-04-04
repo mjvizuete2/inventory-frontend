@@ -1,0 +1,17 @@
+﻿<div class="delete-dialog__icon">
+  <mat-icon>warning</mat-icon>
+</div>
+
+<h2 mat-dialog-title>Eliminar categoria</h2>
+
+<mat-dialog-content>
+  <p>
+    Se eliminara <strong>{{ category.name }}</strong> del catalogo actual.
+  </p>
+  <p>Esta accion no se puede deshacer.</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close type="button">Cancelar</button>
+  <button mat-flat-button color="warn" type="button" (click)="confirm()">Eliminar</button>
+</mat-dialog-actions>

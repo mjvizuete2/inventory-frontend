@@ -1,0 +1,10 @@
+﻿.delete-dialog__icon {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #b91c1c;
+}
