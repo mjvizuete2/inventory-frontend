@@ -1,6 +1,9 @@
+export type CustomerDocumentType = 'CEDULA' | 'RUC' | 'EXTRANJERO';
+
 export interface Customer {
   id: number;
   name: string;
+  documentType: CustomerDocumentType;
   documentNumber: string;
   email: string;
   phone: string;

@@ -1,128 +1,140 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, delay, map, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, map, of, tap } from 'rxjs';
+import { environment } from '../../../environments/environments';
 import { Customer, CustomerPayload } from '../../shared/interfaces/customer';
 
-const MOCK_CUSTOMERS: Customer[] = [
-  {
-    id: 1,
-    name: 'Comercial Andina SAS',
-    documentNumber: '901245778',
-    email: 'compras@comercialandina.co',
-    phone: '3204567890',
-    address: 'Calle 85 # 14-22',
-    city: 'Bogota',
-    status: 'active',
-    updatedAt: '2026-03-25T08:30:00.000Z'
-  },
-  {
-    id: 2,
-    name: 'Distribuciones Nova',
-    documentNumber: '800456123',
-    email: 'pedidos@nova.com.co',
-    phone: '3159876541',
-    address: 'Carrera 43A # 5A-113',
-    city: 'Medellin',
-    status: 'active',
-    updatedAt: '2026-03-29T13:20:00.000Z'
-  },
-  {
-    id: 3,
-    name: 'Papeleria Horizonte',
-    documentNumber: '860112009',
-    email: 'admin@horizonte.co',
-    phone: '3102223344',
-    address: 'Avenida 30 de Agosto # 40-18',
-    city: 'Pereira',
-    status: 'inactive',
-    updatedAt: '2026-03-17T10:10:00.000Z'
-  }
-];
+type ApiCustomer = {
+  id: number;
+  documentType: string;
+  identification: string;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  updatedAt: string;
+};
 
 @Injectable({
   providedIn: 'root'
 })
 export class CustomerService {
-  private readonly customersSubject = new BehaviorSubject<Customer[]>(MOCK_CUSTOMERS);
-  private readonly responseDelay = 150;
+  private readonly http = inject(HttpClient);
+  private readonly customersSubject = new BehaviorSubject<Customer[]>([]);
+  private loaded = false;
 
   getCustomers(): Observable<Customer[]> {
-    return this.customersSubject.asObservable().pipe(delay(this.responseDelay));
+    if (!this.loaded) {
+      this.refreshCustomers().subscribe();
+    }
+
+    return this.customersSubject.asObservable();
+  }
+
+  refreshCustomers(): Observable<Customer[]> {
+    return this.http.get<ApiCustomer[]>(`${environment.apiBaseUrl}/clients`).pipe(
+      map((customers) => customers.map((customer) => this.mapCustomer(customer))),
+      tap((customers) => {
+        this.loaded = true;
+        this.customersSubject.next(customers);
+      })
+    );
   }
 
   searchCustomers(term: string): Observable<Customer[]> {
     const normalizedTerm = term.trim().toLowerCase();
 
     if (!normalizedTerm) {
-      return of([]).pipe(delay(this.responseDelay));
+      return of([]);
     }
 
-    return of(
-      this.customersSubject.value
-        .filter((customer) =>
-          customer.status === 'active' &&
-          [
-            customer.name,
-            customer.email,
-            customer.documentNumber
-          ].join(' ').toLowerCase().includes(normalizedTerm)
-        )
-        .slice(0, 8)
-        .map((customer) => ({ ...customer }))
-    ).pipe(delay(this.responseDelay));
+    return this.getCustomers().pipe(
+      map((customers) =>
+        customers
+          .filter((customer) =>
+            `${customer.name} ${customer.email} ${customer.documentNumber}`.toLowerCase().includes(normalizedTerm)
+          )
+          .slice(0, 8)
+      )
+    );
   }
 
-  getCustomersSnapshot(): Customer[] {
-    return this.customersSubject.value.map((customer) => ({ ...customer }));
-  }
+  findCustomerByDocument(documentNumber: string): Observable<Customer | undefined> {
+    const normalizedDocument = documentNumber.trim().toUpperCase();
 
-  getActiveCustomersSnapshot(): Customer[] {
-    return this.getCustomersSnapshot().filter((customer) => customer.status === 'active');
+    if (!normalizedDocument) {
+      return of(undefined);
+    }
+
+    return this.getCustomers().pipe(
+      map((customers) => customers.find((customer) => customer.documentNumber.trim().toUpperCase() === normalizedDocument))
+    );
   }
 
   getCustomerById(id: number): Observable<Customer | undefined> {
-    return this.getCustomers().pipe(
-      map((customers) => customers.find((customer) => customer.id === id))
+    const cached = this.customersSubject.value.find((customer) => customer.id === id);
+    if (cached) {
+      return of({ ...cached });
+    }
+
+    return this.http.get<ApiCustomer>(`${environment.apiBaseUrl}/clients/${id}`).pipe(
+      map((customer) => this.mapCustomer(customer))
     );
   }
 
   createCustomer(payload: CustomerPayload): Observable<Customer> {
-    const customer: Customer = {
-      ...payload,
-      id: this.getNextId(),
-      updatedAt: new Date().toISOString()
-    };
-
-    this.customersSubject.next([...this.customersSubject.value, customer]);
-    return of(customer).pipe(delay(this.responseDelay));
+    return this.http.post<ApiCustomer>(`${environment.apiBaseUrl}/clients`, this.toApiPayload(payload)).pipe(
+      map((customer) => this.mapCustomer(customer)),
+      tap((customer) => {
+        this.customersSubject.next([customer, ...this.customersSubject.value]);
+      })
+    );
   }
 
   updateCustomer(id: number, payload: CustomerPayload): Observable<Customer> {
-    let updatedCustomer!: Customer;
-
-    const customers = this.customersSubject.value.map((customer) => {
-      if (customer.id !== id) {
-        return customer;
-      }
-
-      updatedCustomer = {
-        ...customer,
-        ...payload,
-        updatedAt: new Date().toISOString()
-      };
-
-      return updatedCustomer;
-    });
-
-    this.customersSubject.next(customers);
-    return of(updatedCustomer).pipe(delay(this.responseDelay));
+    return this.http.put<ApiCustomer>(`${environment.apiBaseUrl}/clients/${id}`, this.toApiPayload(payload)).pipe(
+      map((customer) => this.mapCustomer(customer)),
+      tap((updatedCustomer) => {
+        this.customersSubject.next(
+          this.customersSubject.value.map((customer) => customer.id === id ? updatedCustomer : customer)
+        );
+      })
+    );
   }
 
   deleteCustomer(id: number): Observable<void> {
-    this.customersSubject.next(this.customersSubject.value.filter((customer) => customer.id !== id));
-    return of(void 0).pipe(delay(this.responseDelay));
+    return this.http.delete<void>(`${environment.apiBaseUrl}/clients/${id}`).pipe(
+      tap(() => {
+        this.customersSubject.next(this.customersSubject.value.filter((customer) => customer.id !== id));
+      })
+    );
   }
 
-  private getNextId(): number {
-    return this.customersSubject.value.reduce((maxId, customer) => Math.max(maxId, customer.id), 0) + 1;
+  private toApiPayload(payload: CustomerPayload): Record<string, unknown> {
+    return {
+      documentType: payload.documentType,
+      identification: payload.documentNumber.trim().toUpperCase(),
+      name: payload.name.trim(),
+      email: payload.email.trim() || undefined,
+      phone: payload.phone.trim() || undefined,
+      address: [payload.address.trim(), payload.city.trim()].filter(Boolean).join(', ')
+    };
+  }
+
+  private mapCustomer(customer: ApiCustomer): Customer {
+    const [address = '', city = ''] = (customer.address ?? '').split(',').map((value) => value.trim());
+
+    return {
+      id: customer.id,
+      documentType: (customer.documentType as Customer['documentType']) ?? 'CEDULA',
+      name: customer.name,
+      documentNumber: customer.identification,
+      email: customer.email ?? '',
+      phone: customer.phone ?? '',
+      address,
+      city,
+      status: 'active',
+      updatedAt: customer.updatedAt
+    };
   }
 }

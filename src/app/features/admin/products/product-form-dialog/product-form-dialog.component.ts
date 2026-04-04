@@ -46,11 +46,11 @@ export class ProductFormDialogComponent {
     name: [this.data.product?.name ?? '', [Validators.required, Validators.maxLength(80)]],
     sku: [this.data.product?.sku ?? '', [Validators.required, Validators.maxLength(30)]],
     categoryId: [this.data.product?.categoryId ?? this.data.categories[0]?.id ?? 0, [Validators.required, Validators.min(1)]],
-    price: [this.data.product?.price ?? 0, [Validators.required, Validators.min(1)]],
+    price: [this.data.product?.price ?? 0, [Validators.required, Validators.min(0.01)]],
     stock: [this.data.product?.stock ?? 0, [Validators.required, Validators.min(0)]],
     status: [this.data.product?.status ?? ('active' as ProductStatus), [Validators.required]],
-    supplier: [this.data.product?.supplier ?? '', [Validators.required, Validators.maxLength(60)]],
-    description: [this.data.product?.description ?? '', [Validators.required, Validators.maxLength(240)]],
+    supplier: [this.data.product?.supplier ?? '', [Validators.maxLength(60)]],
+    description: [this.data.product?.description ?? '', [Validators.maxLength(240)]],
     iva: [this.data.product?.iva ?? true]
   });
 
@@ -60,6 +60,16 @@ export class ProductFormDialogComponent {
       return;
     }
 
-    this.dialogRef.close(this.form.getRawValue());
+    const rawValue = this.form.getRawValue();
+    this.dialogRef.close({
+      ...rawValue,
+      name: rawValue.name.trim(),
+      sku: rawValue.sku.trim().toUpperCase(),
+      categoryId: Number(rawValue.categoryId),
+      price: Number(Number(rawValue.price).toFixed(2)),
+      stock: Number(rawValue.stock),
+      supplier: rawValue.supplier.trim(),
+      description: rawValue.description.trim()
+    });
   }
 }

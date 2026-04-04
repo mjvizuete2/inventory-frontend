@@ -15,6 +15,10 @@
         <mat-icon matListItemIcon>storefront</mat-icon>
         <span matListItemTitle>Productos</span>
       </a>
+      <a mat-list-item routerLink="/admin/categories" routerLinkActive="active-link">
+        <mat-icon matListItemIcon>category</mat-icon>
+        <span matListItemTitle>Categorías</span>
+      </a>
       <a mat-list-item routerLink="/admin/customers" routerLinkActive="active-link">
         <mat-icon matListItemIcon>groups</mat-icon>
         <span matListItemTitle>Clientes</span>
@@ -32,11 +36,12 @@
 
   <mat-sidenav-content class="shell__content">
     <mat-toolbar color="primary" class="shell__toolbar">
-      <span>Gestión de productos</span>
+      <span>Gestión comercial</span>
       <span class="shell__spacer"></span>
-      <button mat-flat-button routerLink="/admin/products">
-        <mat-icon>inventory</mat-icon>
-        Catálogo
+      <span>{{ userEmail }}</span>
+      <button mat-stroked-button type="button" (click)="logout()">
+        <mat-icon>logout</mat-icon>
+        Salir
       </button>
     </mat-toolbar>
 

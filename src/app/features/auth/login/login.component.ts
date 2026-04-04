@@ -6,8 +6,9 @@ import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { AuthService } from '../../../core/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ import { Router } from '@angular/router';
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
-    MatSelectModule
+    MatSnackBarModule
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -28,18 +29,14 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly snackBar = inject(MatSnackBar);
 
   readonly hidePassword = signal(true);
-  readonly roles = [
-    { value: 'admin', label: 'Administrador' },
-    { value: 'seller', label: 'Facturación' },
-    { value: 'warehouse', label: 'Bodega' }
-  ];
 
   readonly form = this.fb.nonNullable.group({
-    role: ['admin', Validators.required],
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, Validators.minLength(6)]]
+    email: ['admin@inventar.local', [Validators.required, Validators.email]],
+    password: ['Admin123*', [Validators.required, Validators.minLength(6)]]
   });
 
   togglePasswordVisibility(): void {
@@ -52,6 +49,16 @@ export class LoginComponent {
       return;
     }
 
-    void this.router.navigateByUrl('/admin/products');
+    this.authService.login(
+      this.form.controls.email.getRawValue(),
+      this.form.controls.password.getRawValue()
+    ).subscribe({
+      next: () => {
+        void this.router.navigateByUrl('/admin/products');
+      },
+      error: () => {
+        this.snackBar.open('Credenciales inválidas.', 'Cerrar', { duration: 3000 });
+      }
+    });
   }
 }

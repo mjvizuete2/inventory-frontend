@@ -13,7 +13,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { RouterLink } from '@angular/router';
 import { Product, ProductPayload } from '../../../../shared/interfaces/product';
+import { CategoryService } from '../../../services/category.service';
 import { ProductService } from '../../../services/product.service';
 import { ProductDeleteDialogComponent } from '../product-delete-dialog/product-delete-dialog.component';
 import { ProductFormDialogComponent } from '../product-form-dialog/product-form-dialog.component';
@@ -23,6 +25,7 @@ import { ProductFormDialogComponent } from '../product-form-dialog/product-form-
   standalone: true,
   imports: [
     CommonModule,
+    RouterLink,
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
@@ -41,23 +44,14 @@ import { ProductFormDialogComponent } from '../product-form-dialog/product-form-
 })
 export class ProductsListComponent implements OnInit, AfterViewInit {
   private readonly productService = inject(ProductService);
+  private readonly categoryService = inject(CategoryService);
   private readonly dialog = inject(MatDialog);
   private readonly snackBar = inject(MatSnackBar);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly displayedColumns: string[] = [
-    'sku',
-    'name',
-    'category',
-    'price',
-    'stock',
-    'status',
-    'iva',
-    'updatedAt',
-    'actions'
-  ];
+  readonly displayedColumns: string[] = ['sku', 'name', 'category', 'price', 'stock', 'status', 'iva', 'updatedAt', 'actions'];
   readonly dataSource = new MatTableDataSource<Product>([]);
-  readonly categories = this.productService.getCategories();
+  categories = this.productService.getCategoriesSnapshot();
 
   loading = true;
 
@@ -67,15 +61,7 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
   constructor() {
     this.dataSource.filterPredicate = (product, filter) => {
       const normalizedFilter = filter.trim().toLowerCase();
-      const haystack = [
-        product.name,
-        product.sku,
-        product.category,
-        product.supplier,
-        product.status
-      ].join(' ').toLowerCase();
-
-      return haystack.includes(normalizedFilter);
+      return `${product.name} ${product.sku} ${product.category} ${product.supplier} ${product.status}`.toLowerCase().includes(normalizedFilter);
     };
 
     this.dataSource.sortingDataAccessor = (product, property) => {
@@ -93,6 +79,13 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.categoryService.getCategories()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((categories) => {
+        this.categories = categories;
+        this.productService.setCategories(categories);
+      });
+
     this.productService.getProducts()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((products) => {
@@ -115,18 +108,14 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
   }
 
   applyFilter(event: Event): void {
-    const value = (event.target as HTMLInputElement).value ?? '';
-    this.dataSource.filter = value.trim().toLowerCase();
+    this.dataSource.filter = ((event.target as HTMLInputElement).value ?? '').trim().toLowerCase();
     this.paginator?.firstPage();
   }
 
   openCreateDialog(): void {
     this.dialog.open(ProductFormDialogComponent, {
       width: '720px',
-      data: {
-        mode: 'create',
-        categories: this.categories
-      }
+      data: { mode: 'create', categories: this.categories }
     }).afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result?: ProductPayload) => {
@@ -136,8 +125,9 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
 
         this.productService.createProduct(result)
           .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe(() => {
-            this.openSnackBar('Producto creado correctamente.');
+          .subscribe({
+            next: () => this.openSnackBar('Producto creado correctamente.'),
+            error: (error) => this.openSnackBar(error.error?.message ?? 'No se pudo crear el producto.')
           });
       });
   }
@@ -145,11 +135,7 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
   openEditDialog(product: Product): void {
     this.dialog.open(ProductFormDialogComponent, {
       width: '720px',
-      data: {
-        mode: 'edit',
-        product,
-        categories: this.categories
-      }
+      data: { mode: 'edit', product, categories: this.categories }
     }).afterClosed()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((result?: ProductPayload) => {
@@ -159,8 +145,9 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
 
         this.productService.updateProduct(product.id, result)
           .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe(() => {
-            this.openSnackBar('Producto actualizado correctamente.');
+          .subscribe({
+            next: () => this.openSnackBar('Producto actualizado correctamente.'),
+            error: (error) => this.openSnackBar(error.error?.message ?? 'No se pudo actualizar el producto.')
           });
       });
   }
@@ -178,8 +165,9 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
 
         this.productService.deleteProduct(product.id)
           .pipe(takeUntilDestroyed(this.destroyRef))
-          .subscribe(() => {
-            this.openSnackBar('Producto eliminado correctamente.');
+          .subscribe({
+            next: () => this.openSnackBar('Producto eliminado correctamente.'),
+            error: (error) => this.openSnackBar(error.error?.message ?? 'No se pudo eliminar el producto.')
           });
       });
   }
@@ -188,16 +176,12 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
     if (this.paginator) {
       this.dataSource.paginator = this.paginator;
     }
-
     if (this.sort) {
       this.dataSource.sort = this.sort;
     }
   }
 
   private openSnackBar(message: string): void {
-    this.snackBar.open(message, 'Cerrar', {
-      duration: 2500
-    });
+    this.snackBar.open(message, 'Cerrar', { duration: 2500 });
   }
-
 }

@@ -1,18 +1,31 @@
 <h2 mat-dialog-title>
-  {{ data.mode === 'create' ? 'Nuevo cliente' : 'Editar cliente' }}
+  {{ data.mode === 'create' ? 'Agregar cliente' : 'Editar cliente' }}
 </h2>
 
 <mat-dialog-content>
   <form [formGroup]="form" class="customer-form">
     <div class="customer-form__grid">
       <mat-form-field appearance="outline">
-        <mat-label>Nombre</mat-label>
-        <input matInput formControlName="name" />
+        <mat-label>Tipo documento</mat-label>
+        <mat-select formControlName="documentType">
+          <mat-option value="CEDULA">Cedula</mat-option>
+          <mat-option value="RUC">RUC</mat-option>
+          <mat-option value="EXTRANJERO">Extranjero</mat-option>
+        </mat-select>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>Documento</mat-label>
+        <mat-label>Identificacion</mat-label>
         <input matInput formControlName="documentNumber" />
+      </mat-form-field>
+
+      <div class="customer-form__full" *ngIf="isExistingCustomer()">
+        Cliente existente encontrado. Se usaran sus datos registrados.
+      </div>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nombre</mat-label>
+        <input matInput formControlName="name" />
       </mat-form-field>
 
       <mat-form-field appearance="outline">
@@ -23,6 +36,7 @@
       <mat-form-field appearance="outline">
         <mat-label>Telefono</mat-label>
         <input matInput formControlName="phone" />
+        <mat-error *ngIf="form.controls.phone.hasError('pattern')">Debe tener 10 digitos.</mat-error>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="customer-form__full">
@@ -49,6 +63,6 @@
 <mat-dialog-actions align="end">
   <button mat-button mat-dialog-close type="button">Cancelar</button>
   <button mat-flat-button color="primary" type="button" (click)="save()">
-    {{ data.mode === 'create' ? 'Crear' : 'Guardar' }}
+    {{ isExistingCustomer() ? 'Usar cliente' : (data.mode === 'create' ? 'Guardar' : 'Actualizar') }}
   </button>
 </mat-dialog-actions>
