@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
 import { environment } from '../../../environments/environments';
@@ -80,6 +80,7 @@ export class SalesService {
   }
 
   createSale(payload: SalePayload): Observable<Sale> {
+    const normalizedReference = payload.paymentReference?.trim() || undefined;
     const body = {
       clientId: payload.customerId,
       createdBy: payload.createdBy,
@@ -93,7 +94,7 @@ export class SalesService {
         {
           paymentMethod: this.mapPaymentMethod(payload.paymentMethod),
           amount: payload.total,
-          reference: payload.paymentReference,
+          reference: normalizedReference,
           receivedAmount: payload.receivedAmount
         }
       ]
@@ -125,7 +126,7 @@ export class SalesService {
       documentNumber: sale.client?.identification ?? '9999999999999',
       createdBy: sale.createdBy ?? 'system',
       paymentMethod: this.mapPaymentMethodLabel(firstPayment?.paymentMethod ?? 'CASH'),
-      paymentReference: firstPayment?.reference ?? undefined,
+      paymentReference: firstPayment?.reference?.trim() || undefined,
       receivedAmount: firstPayment?.receivedAmount ? Number(firstPayment.receivedAmount) : undefined,
       changeAmount: firstPayment?.changeAmount ? Number(firstPayment.changeAmount) : undefined,
       subtotal: Number(sale.subtotal),
@@ -144,7 +145,7 @@ export class SalesService {
       payments: sale.payments.map((payment) => ({
         paymentMethod: this.mapPaymentMethodLabel(payment.paymentMethod),
         amount: Number(payment.amount),
-        reference: payment.reference ?? undefined,
+        reference: payment.reference?.trim() || undefined,
         receivedAmount: payment.receivedAmount ? Number(payment.receivedAmount) : undefined,
         changeAmount: payment.changeAmount ? Number(payment.changeAmount) : undefined
       })),

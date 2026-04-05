@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -37,7 +37,7 @@ export class SalesListComponent implements OnInit, AfterViewInit {
   private readonly salesService = inject(SalesService);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly displayedColumns = ['id', 'date', 'customer', 'createdBy', 'items', 'paymentMethod', 'iva', 'total', 'actions'];
+  readonly displayedColumns = ['id', 'date', 'customer', 'createdBy', 'items', 'paymentMethod', 'paymentReference', 'iva', 'total', 'actions'];
   readonly dataSource = new MatTableDataSource<Sale>([]);
 
   allSales: Sale[] = [];
@@ -126,6 +126,7 @@ export class SalesListComponent implements OnInit, AfterViewInit {
         sale.customerName,
         sale.documentNumber,
         sale.paymentMethod,
+        sale.paymentReference ?? '',
         sale.id
       ].join(' ').toLowerCase();
       const saleDate = new Date(sale.date);

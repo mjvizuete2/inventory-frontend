@@ -1,9 +1,19 @@
-﻿.closures-page__card {
+﻿.closures-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.closures-page__card {
   border-radius: 1.5rem;
   overflow: hidden;
 }
 
-.closures-page__header {
+.closures-page__card--current {
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+}
+
+.closures-page__header,
+.closures-page__section-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
@@ -20,14 +30,66 @@
   text-transform: uppercase;
 }
 
-.closures-page__header h1 {
+.closures-page__header h1,
+.closures-page__section-header h2 {
   margin: 0;
+}
+
+.closures-page__header h1 {
   font-size: 2rem;
 }
 
 .closures-page__header p:last-child {
   margin: 0.4rem 0 0;
   color: #64748b;
+}
+
+.closures-page__loading,
+.closures-page__open-box,
+.closures-page__current {
+  padding: 1.5rem;
+}
+
+.closures-page__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.closures-page__stat {
+  padding: 1rem;
+  border-radius: 1rem;
+  background: #eff6ff;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.closures-page__stat span {
+  color: #64748b;
+  font-size: 0.85rem;
+}
+
+.closures-page__breakdown {
+  display: grid;
+  gap: 0.2rem;
+}
+
+.closures-page__breakdown--current {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-top: 1rem;
+}
+
+.closures-page__close-controls,
+.closures-page__open-box {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.closures-page__amount-field {
+  width: min(100%, 240px);
 }
 
 .closures-page__filters {
@@ -46,8 +108,7 @@
   overflow: auto;
 }
 
-.closures-page__users,
-.closures-page__breakdown {
+.closures-page__users {
   display: grid;
   gap: 0.2rem;
 }
@@ -57,11 +118,20 @@ table {
 }
 
 @media (max-width: 720px) {
-  .closures-page__header {
-    flex-direction: column;
-  }
-
+  .closures-page__header,
+  .closures-page__section-header,
+  .closures-page__open-box,
+  .closures-page__close-controls,
   .closures-page__filters {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .closures-page__header h1 {
+    font-size: 1.65rem;
+  }
+
+  .closures-page__amount-field {
+    width: 100%;
   }
 }

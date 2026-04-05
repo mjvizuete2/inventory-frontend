@@ -1,4 +1,4 @@
-<section class="sales-page">
+﻿<section class="sales-page">
   <mat-card class="sales-page__card">
     <div class="sales-page__header">
       <div>
@@ -15,7 +15,7 @@
 
     <div class="sales-page__summary">
       <mat-chip>Total ventas: {{ dataSource.data.length }}</mat-chip>
-      <mat-chip>Facturado hoy: {{ todayTotal  | number:'1.0-2'  }}</mat-chip>
+      <mat-chip>Facturado hoy: {{ todayTotal | number:'1.0-2' }}</mat-chip>
     </div>
 
     <div class="sales-page__toolbar">
@@ -78,14 +78,19 @@
           <td mat-cell *matCellDef="let sale">{{ sale.paymentMethod }}</td>
         </ng-container>
 
+        <ng-container matColumnDef="paymentReference">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>N° Transferencia</th>
+          <td mat-cell *matCellDef="let sale">{{ sale.paymentReference || '-' }}</td>
+        </ng-container>
+
         <ng-container matColumnDef="iva">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>IVA</th>
-          <td mat-cell *matCellDef="let sale">{{ sale.iva  | number:'1.0-2'  }}</td>
+          <td mat-cell *matCellDef="let sale">{{ sale.iva | number:'1.0-2' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="total">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Total</th>
-          <td mat-cell *matCellDef="let sale">{{ sale.total  | number:'1.0-2'  }}</td>
+          <td mat-cell *matCellDef="let sale">{{ sale.total | number:'1.0-2' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="actions">
