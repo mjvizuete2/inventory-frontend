@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatAutocompleteModule, MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
@@ -19,6 +19,7 @@ import { Customer, CustomerPayload } from '../../../../shared/interfaces/custome
 import { Product } from '../../../../shared/interfaces/product';
 import { SaleItemPayload, SalePayload } from '../../../../shared/interfaces/sale';
 import { CustomerFormDialogComponent } from '../../customers/customer-form-dialog/customer-form-dialog.component';
+import { CashClosureService } from '../../../services/cash-closure.service';
 import { CustomerService } from '../../../services/customer.service';
 import { ProductService } from '../../../services/product.service';
 import { SalesService } from '../../../services/sales.service';
@@ -51,12 +52,13 @@ type SaleItemForm = FormGroup<{
   templateUrl: './sale-create.component.html',
   styleUrl: './sale-create.component.css'
 })
-export class SaleCreateComponent {
+export class SaleCreateComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly dialog = inject(MatDialog);
   private readonly customerService = inject(CustomerService);
   private readonly productService = inject(ProductService);
   private readonly salesService = inject(SalesService);
+  private readonly cashClosureService = inject(CashClosureService);
   private readonly authService = inject(AuthService);
   private readonly snackBar = inject(MatSnackBar);
   private readonly router = inject(Router);
@@ -80,6 +82,8 @@ export class SaleCreateComponent {
 
   selectedCustomer?: Customer;
   saving = false;
+  cashBoxLoading = true;
+  hasOpenCashBox = false;
 
   constructor() {
     this.form.controls.paymentMethod.valueChanges
@@ -101,6 +105,15 @@ export class SaleCreateComponent {
       });
   }
 
+  ngOnInit(): void {
+    this.cashClosureService.getCurrentClosure()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((currentClosure) => {
+        this.hasOpenCashBox = !!currentClosure && currentClosure.status === 'OPEN';
+        this.cashBoxLoading = false;
+      });
+  }
+
   get items(): FormArray<SaleItemForm> {
     return this.form.controls.items;
   }
@@ -111,6 +124,10 @@ export class SaleCreateComponent {
 
   get isTransferPayment(): boolean {
     return this.form.controls.paymentMethod.getRawValue() === 'transfer';
+  }
+
+  get canSubmit(): boolean {
+    return !this.saving && !this.cashBoxLoading && this.hasOpenCashBox;
   }
 
   get changeAmount(): number {
@@ -273,6 +290,11 @@ export class SaleCreateComponent {
   }
 
   submit(): void {
+    if (!this.hasOpenCashBox) {
+      this.snackBar.open('Debes abrir la caja antes de registrar una venta.', 'Cerrar', { duration: 3000 });
+      return;
+    }
+
     if (this.saving || this.form.invalid || !this.selectedCustomer || !this.items.length || this.hasUnselectedProducts()) {
       this.form.markAllAsTouched();
       return;

@@ -14,6 +14,10 @@
       </div>
     </div>
 
+    <div class="sale-alert sale-alert--warning" *ngIf="!cashBoxLoading && !hasOpenCashBox">
+      Debes abrir la caja antes de registrar una venta.
+    </div>
+
     <form [formGroup]="form" class="sale-flow" (ngSubmit)="submit()">
       <section class="sale-block">
         <div class="sale-block__head">
@@ -61,7 +65,7 @@
                 <th>Producto</th>
                 <th>Cantidad</th>
                 <th>Modificar</th>
-                                <th></th>
+                <th></th>
                 <th>Valores</th>
                 <th></th>
               </tr>
@@ -71,20 +75,19 @@
                 <td>
                   <mat-form-field appearance="outline">
                     <mat-label>Producto</mat-label>
-                    <input matInput formControlName="productQuery" [matAutocomplete]="productAuto"
-                      placeholder="Nombre o SKU" />
+                    <input matInput formControlName="productQuery" [matAutocomplete]="productAuto" placeholder="Nombre o SKU" />
                     <mat-icon matSuffix>search</mat-icon>
                   </mat-form-field>
                   <mat-autocomplete #productAuto="matAutocomplete" (optionSelected)="onProductSelected(i, $event)">
                     <mat-option *ngFor="let product of getProductOptions(i) | async" [value]="product.id">
                       <div class="autocomplete-option">
                         <strong>{{ product.name }}</strong>
-                        <span>{{ product.sku }} </span>
+                        <span>{{ product.sku }}</span>
                       </div>
                     </mat-option>
                   </mat-autocomplete>
                 </td>
-                
+
                 <td>
                   <mat-form-field appearance="outline">
                     <mat-label>Cantidad</mat-label>
@@ -95,7 +98,7 @@
                   <mat-checkbox formControlName="applyDiscount">Modificar precio</mat-checkbox>
                 </td>
                 <td>
-                  <div class="sale-price" *ngIf="getSelectedProduct(i) as product;">
+                  <div class="sale-price" *ngIf="getSelectedProduct(i) as product">
                     <mat-form-field appearance="outline" *ngIf="isDiscountEnabled(i)">
                       <mat-label>Precio final</mat-label>
                       <input matInput type="number" step="0.01" formControlName="finalPrice" />
@@ -110,8 +113,7 @@
                   </div>
                 </td>
                 <td class="sale-table__actions">
-                  <button mat-icon-button color="warn" type="button" (click)="removeItem(i)"
-                    [disabled]="items.length === 1">
+                  <button mat-icon-button color="warn" type="button" (click)="removeItem(i)" [disabled]="items.length === 1">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </td>
@@ -184,8 +186,7 @@
               </div>
             </div>
 
-            <button mat-flat-button color="primary" class="sale-summary-table__submit" type="submit"
-              [disabled]="saving">
+            <button mat-flat-button color="primary" class="sale-summary-table__submit" type="submit" [disabled]="!canSubmit">
               Guardar factura
             </button>
           </section>
