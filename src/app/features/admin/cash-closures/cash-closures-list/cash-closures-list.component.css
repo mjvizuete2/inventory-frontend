@@ -1,9 +1,13 @@
-.closures-page__card {
+﻿.closures-page__card {
   border-radius: 1.5rem;
   overflow: hidden;
 }
 
 .closures-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
   padding: 1.5rem 1.5rem 0;
 }
 
@@ -53,6 +57,10 @@ table {
 }
 
 @media (max-width: 720px) {
+  .closures-page__header {
+    flex-direction: column;
+  }
+
   .closures-page__filters {
     flex-direction: column;
   }

@@ -46,12 +46,12 @@
       <div class="ticket__item" *ngFor="let item of invoice.items">
         <div class="ticket__item-main">
           <strong>{{ item.productName }}</strong>
-          <span>{{ item.quantity }} x {{ item.price | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span>{{ item.quantity }} x {{ item.price  | number:'1.0-2'  }}</span>
         </div>
-        <strong>{{ item.total | currency:'COP':'symbol':'1.0-0' }}</strong>
+        <strong>{{ item.total  | number:'1.0-2'  }}</strong>
         <div class="ticket__item-sub">
-          <span>Subtotal {{ item.subtotal | currency:'COP':'symbol':'1.0-0' }}</span>
-          <span>IVA {{ item.ivaAmount | currency:'COP':'symbol':'1.0-0' }}</span>
+          <span>Subtotal {{ item.subtotal  | number:'1.0-2'  }}</span>
+          <span>IVA {{ item.ivaAmount  | number:'1.0-2'  }}</span>
         </div>
       </div>
     </div>
@@ -61,15 +61,15 @@
     <div class="ticket__totals">
       <div class="ticket__row">
         <span>Subtotal</span>
-        <strong>{{ invoice.subtotal | currency:'COP':'symbol':'1.0-0' }}</strong>
+        <strong>{{ invoice.subtotal  | number:'1.0-2'  }}</strong>
       </div>
       <div class="ticket__row">
         <span>IVA</span>
-        <strong>{{ invoice.iva | currency:'COP':'symbol':'1.0-0' }}</strong>
+        <strong>{{ invoice.iva  | number:'1.0-2'  }}</strong>
       </div>
       <div class="ticket__row ticket__row--total">
         <span>Total</span>
-        <strong>{{ invoice.total | currency:'COP':'symbol':'1.0-0' }}</strong>
+        <strong>{{ invoice.total  | number:'1.0-2'  }}</strong>
       </div>
     </div>
 

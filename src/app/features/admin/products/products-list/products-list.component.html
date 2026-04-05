@@ -1,16 +1,23 @@
-<section class="products-page">
+﻿<section class="products-page">
   <mat-card class="products-page__card">
     <div class="products-page__header">
       <div>
-        <p class="products-page__eyebrow">Módulo de productos</p>
-        <h1>Catálogo</h1>
+        <p class="products-page__eyebrow">Modulo de productos</p>
+        <h1>Catalogo</h1>
         <p>Administra el listado, stock, precios y estado comercial de cada referencia.</p>
       </div>
 
-      <button mat-flat-button color="primary" (click)="openCreateDialog()">
-        <mat-icon>add</mat-icon>
-        Nuevo producto
-      </button>
+      <div class="products-page__actions">
+        <button mat-stroked-button type="button" (click)="refreshProducts()" [disabled]="refreshing || loading">
+          <mat-icon>refresh</mat-icon>
+          Refresh
+        </button>
+
+        <button mat-flat-button color="primary" (click)="openCreateDialog()">
+          <mat-icon>add</mat-icon>
+          Nuevo producto
+        </button>
+      </div>
     </div>
 
     <div class="products-page__summary">
@@ -24,7 +31,7 @@
         <mat-label>Filtrar productos</mat-label>
         <input
           matInput
-          placeholder="Nombre, SKU, categoría o proveedor"
+          placeholder="Nombre, SKU, categoria o proveedor"
           (input)="applyFilter($event)"
         />
         <mat-icon matSuffix>search</mat-icon>
@@ -53,13 +60,13 @@
         </ng-container>
 
         <ng-container matColumnDef="category">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoría</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Categoria</th>
           <td mat-cell *matCellDef="let product">{{ product.category }}</td>
         </ng-container>
 
         <ng-container matColumnDef="price">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Precio</th>
-          <td mat-cell *matCellDef="let product">{{ product.price | currency:'COP':'symbol':'1.0-0' }}</td>
+          <td mat-cell *matCellDef="let product">{{ product.price | number:'1.2-2' }}</td>
         </ng-container>
 
         <ng-container matColumnDef="stock">

@@ -1,8 +1,10 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, OnInit, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
@@ -14,8 +16,10 @@ import { CashClosureService } from '../../../services/cash-closure.service';
   standalone: true,
   imports: [
     CommonModule,
+    MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
+    MatIconModule,
     MatInputModule,
     MatSelectModule,
     MatTableModule
@@ -41,13 +45,25 @@ export class CashClosuresListComponent implements OnInit {
   dateTo = '';
   userFilter = '';
   methodFilter = '';
+  refreshing = false;
 
   ngOnInit(): void {
-    this.cashClosureService.getClosures()
+    this.loadClosures();
+  }
+
+  refreshClosures(): void {
+    this.refreshing = true;
+    this.cashClosureService.refreshClosures()
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((closures) => {
-        this.allClosures = closures;
-        this.applyFilters();
+      .subscribe({
+        next: (closures) => {
+          this.allClosures = closures;
+          this.applyFilters();
+          this.refreshing = false;
+        },
+        error: () => {
+          this.refreshing = false;
+        }
       });
   }
 
@@ -73,6 +89,15 @@ export class CashClosuresListComponent implements OnInit {
 
   get filteredTotal(): number {
     return this.filteredClosures.reduce((total, closure) => total + closure.total, 0);
+  }
+
+  private loadClosures(): void {
+    this.cashClosureService.refreshClosures()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((closures) => {
+        this.allClosures = closures;
+        this.applyFilters();
+      });
   }
 
   private applyFilters(): void {

@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, DestroyRef, OnInit, ViewChild, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -54,6 +54,7 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
   categories = this.productService.getCategoriesSnapshot();
 
   loading = true;
+  refreshing = false;
 
   @ViewChild(MatPaginator) paginator?: MatPaginator;
   @ViewChild(MatSort) sort?: MatSort;
@@ -86,13 +87,7 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
         this.productService.setCategories(categories);
       });
 
-    this.productService.getProducts()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((products) => {
-        this.dataSource.data = products;
-        this.loading = false;
-        this.attachTableHelpers();
-      });
+    this.loadProducts();
   }
 
   ngAfterViewInit(): void {
@@ -110,6 +105,24 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
   applyFilter(event: Event): void {
     this.dataSource.filter = ((event.target as HTMLInputElement).value ?? '').trim().toLowerCase();
     this.paginator?.firstPage();
+  }
+
+  refreshProducts(): void {
+    this.refreshing = true;
+    this.productService.refreshProducts()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (products) => {
+          this.dataSource.data = products;
+          this.attachTableHelpers();
+          this.refreshing = false;
+          this.openSnackBar('Productos actualizados.');
+        },
+        error: () => {
+          this.refreshing = false;
+          this.openSnackBar('No se pudieron actualizar los productos.');
+        }
+      });
   }
 
   openCreateDialog(): void {
@@ -169,6 +182,23 @@ export class ProductsListComponent implements OnInit, AfterViewInit {
             next: () => this.openSnackBar('Producto eliminado correctamente.'),
             error: (error) => this.openSnackBar(error.error?.message ?? 'No se pudo eliminar el producto.')
           });
+      });
+  }
+
+  private loadProducts(): void {
+    this.loading = true;
+    this.productService.refreshProducts()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (products) => {
+          this.dataSource.data = products;
+          this.loading = false;
+          this.attachTableHelpers();
+        },
+        error: () => {
+          this.loading = false;
+          this.openSnackBar('No se pudieron cargar los productos.');
+        }
       });
   }
 

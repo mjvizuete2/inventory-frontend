@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+﻿import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
 import { CashClosure } from '../../shared/interfaces/cash-closure';
 import { Sale } from '../../shared/interfaces/sale';
@@ -12,6 +12,12 @@ export class CashClosureService {
 
   getClosures(): Observable<CashClosure[]> {
     return this.salesService.getSales().pipe(
+      map((sales) => this.groupSalesByDay(sales))
+    );
+  }
+
+  refreshClosures(): Observable<CashClosure[]> {
+    return this.salesService.refreshSales().pipe(
       map((sales) => this.groupSalesByDay(sales))
     );
   }

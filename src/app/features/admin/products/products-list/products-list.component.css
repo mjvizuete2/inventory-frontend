@@ -1,4 +1,4 @@
-.products-page {
+﻿.products-page {
   display: flex;
   flex-direction: column;
 }
@@ -14,6 +14,12 @@
   align-items: flex-start;
   gap: 1rem;
   padding: 1.5rem 1.5rem 0;
+}
+
+.products-page__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 .products-page__eyebrow {
@@ -97,6 +103,11 @@ table {
 @media (max-width: 768px) {
   .products-page__header {
     flex-direction: column;
+  }
+
+  .products-page__actions {
+    width: 100%;
+    flex-wrap: wrap;
   }
 
   .products-page__header h1 {
